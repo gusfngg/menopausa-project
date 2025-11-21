@@ -1,11 +1,36 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { SymptomData, AIAdviceResponse } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Função auxiliar para garantir que o app nunca trave, mesmo sem API Key
+const getFallbackAdvice = (data: SymptomData): AIAdviceResponse => {
+  return {
+    advice: "No momento, estamos operando em modo de demonstração local. Lembre-se: respire fundo, você é forte e essa fase é passageira. Sua saúde é prioridade.",
+    actionableSteps: [
+      "Beba um copo de água fresca agora",
+      "Pratique 5 minutos de respiração consciente",
+      "Tente descansar um pouco se possível"
+    ]
+  };
+};
 
 export const getPersonalizedAdvice = async (data: SymptomData): Promise<AIAdviceResponse> => {
   try {
+    // BLINDAGEM DE SEGURANÇA:
+    // Verifica se a chave existe ANTES de iniciar a IA.
+    // Se não existir, retorna o fallback silenciosamente em vez de travar o app.
+    const apiKey = process.env.API_KEY;
+
+    if (!apiKey || apiKey.includes("YOUR_API_KEY") || apiKey === "undefined") {
+      console.warn("API Key não detectada ou inválida. Usando resposta de fallback para não travar a apresentação.");
+      // Pequeno delay para simular o processamento e não ser instantâneo demais (artificial)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return getFallbackAdvice(data);
+    }
+
+    // Inicializa a IA apenas se a chave existir
+    const ai = new GoogleGenAI({ apiKey });
     const model = "gemini-2.5-flash";
+
     const prompt = `
       Atue como uma especialista em saúde da mulher, focada em menopausa, com um tom acolhedor, empoderador e gentil.
       
@@ -49,9 +74,7 @@ export const getPersonalizedAdvice = async (data: SymptomData): Promise<AIAdvice
 
   } catch (error) {
     console.error("Error fetching advice:", error);
-    return {
-      advice: "No momento, estamos com dificuldade em conectar com nossa assistente virtual. Lembre-se: respire fundo, você é forte e essa fase é passageira.",
-      actionableSteps: ["Beba um copo de água fresca", "Pratique 5 minutos de respiração consciente", "Tente descansar um pouco"]
-    };
+    // Em caso de erro de rede ou qualquer falha, retorna o fallback seguro
+    return getFallbackAdvice(data);
   }
 };
