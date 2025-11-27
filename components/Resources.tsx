@@ -5,13 +5,10 @@ import { FileText, Download, Eye, X, ExternalLink } from 'lucide-react';
 const Resources: React.FC = () => {
   const [showPreview, setShowPreview] = useState(false);
 
-  // ---------------------------------------------------------------------------
-  // INSTRUÇÃO PARA O USUÁRIO:
-  // Quando seu PDF estiver pronto, coloque-o na pasta 'public' do projeto.
-  // Exemplo: public/meu-guia.pdf
-  // Depois, mude a linha abaixo para: const pdfUrl = "/meu-guia.pdf";
-  // ---------------------------------------------------------------------------
-  const pdfUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"; 
+  // PDF EM DATA URI (BASE64) - MODO DEMONSTRAÇÃO
+  // Isso garante que o arquivo exista dentro do código, sem depender de servidor ou uploads externos.
+  // Renomeado para 'demoPdfData' para evitar cache do navegador com a versão anterior.
+  const demoPdfData = "/guia-menopausa.pdf";
 
   return (
     <section className="py-24 bg-gradient-to-b from-rose-50 to-white relative">
@@ -26,19 +23,19 @@ const Resources: React.FC = () => {
             {/* Text Content */}
             <div className="flex-1 text-center md:text-left">
               <span className="inline-block px-4 py-1 rounded-full bg-rose-800/50 border border-rose-700 text-rose-200 text-sm mb-6">
-                Material Exclusivo
+                Material Exclusivo UNISO
               </span>
               <h2 className="font-serif text-4xl md:text-5xl mb-6 leading-tight">
-                Guia Completo: <br/>Nutrição e Hormônios
+                Guia de Autocuidado: <br/>Menopausa
               </h2>
               <p className="text-rose-100 text-lg mb-8 max-w-lg">
-                Um ebook preparado por especialistas com receitas, dicas de fitoterápicos e estratégias naturais para aliviar sintomas.
+                Um guia completo preparado com carinho pela Nutrição, contendo checklists, receitas, caça-palavras e orientações para viver essa fase com leveza.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                 <a 
-                  href={pdfUrl} 
-                  download="Guia-MenoFlow.pdf"
+                  href={demoPdfData} 
+                  download="Guia-Menopausa-UNISO.pdf"
                   className="px-6 py-3 bg-white text-rose-900 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-rose-50 transition-colors cursor-pointer"
                 >
                   <Download className="w-5 h-5" />
@@ -54,11 +51,11 @@ const Resources: React.FC = () => {
               </div>
             </div>
 
-            {/* Visual Representation of PDF */}
+            {/* Visual Representation of PDF (Estilizado como a sua capa real) */}
             <motion.div 
               whileHover={{ scale: 1.02, rotate: 2 }}
               onClick={() => setShowPreview(true)}
-              className="relative w-64 md:w-80 aspect-[3/4] bg-white rounded-2xl shadow-2xl rotate-3 border-4 border-rose-100/20 flex flex-col overflow-hidden cursor-pointer group"
+              className="relative w-64 md:w-80 aspect-[3/4] bg-[#F5C7C7] rounded-xl shadow-2xl rotate-3 border-2 border-white/20 flex flex-col overflow-hidden cursor-pointer group"
             >
               {/* Overlay Hint */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-20 flex items-center justify-center">
@@ -67,22 +64,31 @@ const Resources: React.FC = () => {
                 </div>
               </div>
 
-              <div className="h-2/3 bg-rose-100 p-6 flex flex-col justify-between relative overflow-hidden">
-                 <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                 <div className="w-12 h-12 bg-white/60 rounded-full flex items-center justify-center backdrop-blur-sm z-10">
-                    <FileText className="text-rose-500 w-6 h-6" />
+              {/* Capa Simulada baseada na imagem enviada */}
+              <div className="flex-1 p-6 flex flex-col items-center justify-start text-center relative">
+                 <div className="absolute top-4 flex gap-2 mb-4 opacity-70">
+                    <div className="w-8 h-8 rounded-full bg-blue-900/20"></div> {/* Logo simulado */}
+                    <div className="w-8 h-8 rounded-full bg-green-900/20"></div> {/* Logo simulado */}
                  </div>
-                 <div className="z-10">
-                   <h3 className="font-serif text-2xl text-rose-900 leading-none mb-1">Guia</h3>
-                   <h3 className="font-serif text-3xl text-rose-900 leading-none font-bold">Essencial</h3>
+                 
+                 <div className="mt-16 w-full">
+                   <p className="font-handwriting text-[#B04A3B] text-lg rotate-[-5deg] mb-2 font-serif italic">Pensando em Você!</p>
+                   <h3 className="font-sans text-5xl font-black text-[#B04A3B] leading-none tracking-tighter uppercase mb-2">
+                     MENO<br/>PAUSA
+                   </h3>
+                   <p className="text-[#B04A3B] text-xs font-bold uppercase tracking-widest">Seu Guia de Autocuidado!</p>
                  </div>
-              </div>
-              <div className="h-1/3 bg-white p-6 flex items-end">
-                <div className="w-full">
-                  <div className="h-2 bg-stone-100 rounded mb-2 w-3/4"></div>
-                  <div className="h-2 bg-stone-100 rounded mb-2 w-full"></div>
-                  <div className="h-2 bg-stone-100 rounded w-1/2"></div>
-                </div>
+
+                 <div className="mt-auto mb-4">
+                    <p className="text-[#B04A3B] font-bold text-sm">UNISO<br/>2025</p>
+                 </div>
+                 
+                 {/* Avatares rodapé simulados */}
+                 <div className="absolute bottom-0 left-0 right-0 h-12 flex items-end justify-center gap-1 opacity-80 px-2">
+                    {[1,2,3,4,5].map(i => (
+                        <div key={i} className="w-full h-8 bg-[#B04A3B]/20 rounded-t-lg"></div>
+                    ))}
+                 </div>
               </div>
             </motion.div>
 
@@ -119,20 +125,19 @@ const Resources: React.FC = () => {
                     <FileText className="w-5 h-5 text-rose-600" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-stone-800">Guia Essencial</h3>
-                    <p className="text-xs text-stone-500">Visualização Rápida</p>
+                    <h3 className="font-bold text-stone-800">Guia UNISO - Menopausa</h3>
+                    <p className="text-xs text-stone-500">Visualização Modo Demonstração (PDF Interno)</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-2">
                    <a 
-                    href={pdfUrl} 
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={demoPdfData} 
+                    download="Guia-Menopausa-Demo.pdf"
                     className="p-2 hover:bg-stone-100 rounded-full transition-colors text-stone-500"
-                    title="Abrir em nova aba"
+                    title="Baixar Arquivo"
                   >
-                    <ExternalLink className="w-5 h-5" />
+                    <Download className="w-5 h-5" />
                   </a>
                   <button 
                     onClick={() => setShowPreview(false)}
@@ -143,17 +148,26 @@ const Resources: React.FC = () => {
                 </div>
               </div>
 
-              {/* PDF Viewer (Iframe) */}
+              {/* PDF Viewer - Usando <object> para maior compatibilidade com Data URI */}
               <div className="flex-1 bg-stone-100 relative">
-                <iframe 
-                  src={`${pdfUrl}#toolbar=0`} 
+                <object
+                  data={demoPdfData}
+                  type="application/pdf"
                   className="w-full h-full"
-                  title="PDF Preview"
-                />
-                {/* Loading/Fallback State for Iframe */}
-                <div className="absolute inset-0 flex items-center justify-center -z-10">
-                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600"></div>
-                </div>
+                  aria-label="Visualização do PDF"
+                >
+                  <div className="flex flex-col items-center justify-center h-full text-stone-500 p-8 text-center">
+                    <FileText className="w-12 h-12 mb-4 text-stone-300" />
+                    <p className="mb-4">Não foi possível exibir a prévia neste navegador.</p>
+                    <a 
+                      href={demoPdfData} 
+                      download="Guia-Menopausa-Demo.pdf"
+                      className="text-rose-600 underline hover:text-rose-700 font-medium"
+                    >
+                      Clique aqui para baixar o arquivo
+                    </a>
+                  </div>
+                </object>
               </div>
             </motion.div>
           </motion.div>
