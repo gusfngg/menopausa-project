@@ -59,19 +59,74 @@ const SymptomTracker: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AIAdviceResponse | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [loadingMessage, setLoadingMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if(!formData.mood || !formData.sleepQuality || !formData.hotFlashes || !formData.energyLevel) return;
     
+    // Save form data before resetting
+    const submittedData = { ...formData };
+    
     setLoading(true);
     setResult(null);
+    setProgress(0);
+    
+    // Reset form
+    setFormData({
+      intensity: 5,
+      mood: '',
+      sleepQuality: '',
+      hotFlashes: '',
+      energyLevel: '',
+      notes: ''
+    });
+    
+    const messages = [
+      'Analisando seus sinais...',
+      'Consultando especialistas...',
+      'Preparando orientações...',
+      'Finalizando análise...'
+    ];
+    
+    let currentMessage = 0;
+    setLoadingMessage(messages[0]);
+    
+    // Simulate progress
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        const next = prev + 2;
+        if (next >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        
+        // Change message at specific progress points
+        if (next >= 25 && currentMessage === 0) {
+          currentMessage = 1;
+          setLoadingMessage(messages[1]);
+        } else if (next >= 50 && currentMessage === 1) {
+          currentMessage = 2;
+          setLoadingMessage(messages[2]);
+        } else if (next >= 75 && currentMessage === 2) {
+          currentMessage = 3;
+          setLoadingMessage(messages[3]);
+        }
+        
+        return next;
+      });
+    }, 50);
     
     // Small delay to ensure UI transitions smoothly before API call
     setTimeout(async () => {
-      const advice = await getPersonalizedAdvice(formData);
-      setResult(advice);
-      setLoading(false);
+      const advice = await getPersonalizedAdvice(submittedData);
+      clearInterval(progressInterval);
+      setProgress(100);
+      setTimeout(() => {
+        setResult(advice);
+        setLoading(false);
+      }, 300);
     }, 500);
   };
 
@@ -127,7 +182,7 @@ const SymptomTracker: React.FC = () => {
                   />
                   <motion.div 
                     className="absolute top-1/2 w-10 h-10 bg-white border-4 border-rose-500 rounded-full shadow-lg -translate-y-1/2 pointer-events-none flex items-center justify-center z-0"
-                    style={{ left: `calc(${((formData.intensity - 1) / 9) * 100}% - 20px)` }} // centering adjustment
+                    style={{ left: `calc(${((formData.intensity - 1) / 9) * 100}% - 20px)` }}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   >
                     <span className="text-xs font-bold text-rose-900">{formData.intensity}</span>
@@ -196,7 +251,7 @@ const SymptomTracker: React.FC = () => {
                 </div>
               </div>
 
-              {/* Hot Flashes (New) */}
+              {/* Hot Flashes */}
               <div className="space-y-3">
                 <label className="block text-sm font-bold text-rose-900 uppercase tracking-wider">Ondas de Calor</label>
                 <div className="grid grid-cols-3 gap-4">
@@ -221,7 +276,7 @@ const SymptomTracker: React.FC = () => {
                 </div>
               </div>
 
-              {/* Energy Level (New) */}
+              {/* Energy Level */}
               <div className="space-y-3">
                 <label className="block text-sm font-bold text-rose-900 uppercase tracking-wider">Disposição</label>
                 <div className="grid grid-cols-3 gap-4">
@@ -291,28 +346,47 @@ const SymptomTracker: React.FC = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="w-full text-center"
+                  className="w-full max-w-md mx-auto text-center"
                 >
-                  <div className="relative w-40 h-40 mx-auto mb-8">
-                    {/* Outer Soft Ring */}
-                    <motion.span 
-                      className="absolute inset-0 border-8 border-rose-100 rounded-full" 
-                    />
-                    {/* Active Spinning Ring */}
-                    <motion.span 
-                      className="absolute inset-0 border-8 border-t-rose-500 border-r-rose-400 border-b-transparent border-l-transparent rounded-full" 
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    />
-                    {/* Inner Pulse */}
-                    <motion.div 
-                       className="absolute inset-0 bg-rose-50 rounded-full m-4 opacity-50"
-                       animate={{ scale: [0.8, 1, 0.8], opacity: [0.3, 0.6, 0.3] }}
-                       transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    />
+                  <div className="mb-8 relative w-32 h-32 mx-auto flex items-center justify-center">
+                    <svg className="w-full h-full" viewBox="0 0 100 100">
+                      {/* Background Track */}
+                      <circle 
+                        cx="50" cy="50" r="45" 
+                        fill="none" 
+                        stroke="#ffe4e6" 
+                        strokeWidth="6" 
+                      />
+                      {/* Progress Arc */}
+                      <motion.circle 
+                        cx="50" cy="50" r="45" 
+                        fill="none" 
+                        stroke="#e11d48" 
+                        strokeWidth="6"
+                        strokeLinecap="round"
+                        strokeDasharray="283"
+                        strokeDashoffset={283 - (283 * progress) / 100}
+                        transition={{ duration: 0.2, ease: "linear" }}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center font-serif text-2xl text-rose-600 font-bold">
+                      {Math.floor(progress)}%
+                    </div>
                   </div>
-                  <h3 className="font-serif text-2xl text-rose-900 mb-2">Analisando seu momento...</h3>
-                  <p className="text-rose-400 font-medium animate-pulse">Consultando nossa especialista IA</p>
+                  
+                  <motion.div
+                    key={loadingMessage}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="h-12"
+                  >
+                    <h3 className="text-xl font-serif text-rose-900 mb-1">{loadingMessage}</h3>
+                    <div className="flex justify-center gap-1">
+                      <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0 }} className="w-1.5 h-1.5 bg-rose-400 rounded-full" />
+                      <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }} className="w-1.5 h-1.5 bg-rose-400 rounded-full" />
+                      <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.4 }} className="w-1.5 h-1.5 bg-rose-400 rounded-full" />
+                    </div>
+                  </motion.div>
                 </motion.div>
               )}
 

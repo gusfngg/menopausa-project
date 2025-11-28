@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
         <div className="flex items-center justify-center gap-2 text-stone-500 text-sm mb-8">
           <span>Feito com</span>
           <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
-          <span>para todas as mulheres</span>
+          <span>por Clara Ayumi Uekita</span>
         </div>
         <p className="text-xs text-stone-400 max-w-lg mx-auto">
           As informações contidas neste site têm caráter informativo e não substituem o aconselhamento médico profissional. Consulte sempre seu ginecologista.

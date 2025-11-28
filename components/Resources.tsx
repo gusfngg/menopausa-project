@@ -5,9 +5,6 @@ import { FileText, Download, Eye, X, ExternalLink } from 'lucide-react';
 const Resources: React.FC = () => {
   const [showPreview, setShowPreview] = useState(false);
 
-  // PDF EM DATA URI (BASE64) - MODO DEMONSTRAÇÃO
-  // Isso garante que o arquivo exista dentro do código, sem depender de servidor ou uploads externos.
-  // Renomeado para 'demoPdfData' para evitar cache do navegador com a versão anterior.
   const demoPdfData = "/guia-menopausa.pdf";
 
   return (

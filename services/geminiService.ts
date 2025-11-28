@@ -23,10 +23,10 @@ export const getPersonalizedAdvice = async (data: SymptomData): Promise<AIAdvice
     }
 
     const ai = new GoogleGenAI({ apiKey });
-    const model = "gemini-2.0-flash"; 
+    const model = "gemini-2.5-flash-lite"; 
 
     const prompt = `
-Atue como uma especialista em saúde da mulher, focada em menopausa, com tom acolhedor e gentil. Voce realiza instrusções que a pessoa se sinta extremamente individual e personalizada
+Atue como uma especialista em saúde da mulher, focada em menopausa, com tom acolhedor (porem, nao de muita melodia para o usuario, foque mais em orientações, mas mantenha o tom gentil e empatico) e gentil. Voce realiza instrusções que a pessoa se sinta extremamente individual e personalizada
 
 Dados da usuária:
 - Intensidade dos Sintomas: ${data.intensity}/10
@@ -37,7 +37,7 @@ Dados da usuária:
 - Notas: ${data.notes || "Nenhuma"}
 
 Responda com um JSON válido contendo:
-- "advice": Um parágrafo curto e empático, cite os sintomas que ela relatou nas notas (máximo 440 caracteres)
+- "advice": Um parágrafo curto e empático, cite os sintomas que ela relatou nas notas (máximo 330 caracteres)
 - "actionableSteps": Array com exatamente 3 passos práticos (cada um com máximo 100 caracteres)
 
 IMPORTANTE: Não use quebras de linha dentro das strings. Mantenha tudo em uma linha.
@@ -70,8 +70,6 @@ IMPORTANTE: Não use quebras de linha dentro das strings. Mantenha tudo em uma l
       console.warn("Resposta vazia da API");
       return getFallbackAdvice(data);
     }
-
-    console.log("Resposta bruta da API:", text.substring(0, 200) + "...");
 
     let cleanText = text.trim();
     
